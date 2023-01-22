@@ -15,21 +15,34 @@ mongoose.set("strictQuery", false);
 
 // get all contacts from db
 app.get("/contacts", async (req, res) => {
-  let contacts = await ContactModel.find();
-  res.send(contacts);
+  try {
+    let contacts = await ContactModel.find();
+    res.send(contacts);
+  } catch (err) {
+    res.send(err);
+  }
 });
 
 // get single contact
 app.get("/contacts/:id/:name", async (req, res) => {
-  let { id } = req.params;
-  let contact = await ContactModel.findOne({ id: Number(id) });
-  res.send(contact);
+  try {
+    let { id } = req.params;
+    let contact = await ContactModel.findOne({ id: Number(id) });
+    res.send(contact);
+  } catch (err) {
+    res.send(err);
+  }
 });
 
 // get all messages from db
 app.get("/messages", async (req, res) => {
-  let messages = await Message.find();
-  res.send(messages);
+  await Message.find()
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.send(err);
+    });
 });
 
 // send message route
@@ -46,7 +59,7 @@ app.post("/message/post", async (req, res) => {
   await Message.create(newMessage)
     .then(() => res.status(201).send("message saved successfully"))
     .catch((err) => {
-      res.status(403).send("failed to store message");
+      res.status(403).send("failed to store message", err);
     });
 });
 
