@@ -64,9 +64,14 @@ app.post("/message/post", async (req, res) => {
 });
 
 // after mongodb is connected start the server
-mongoose.connect(process.env.DB_URL).then(() => {
-  console.log("db connected");
-  app.listen(process.env.PORT, () => {
-    console.log("server running on port", process.env.PORT);
+mongoose
+  .connect(process.env.DB_URL)
+  .then(() => {
+    console.log("db connected");
+    app.listen(process.env.PORT, () => {
+      console.log("server running on port", process.env.PORT);
+    });
+  })
+  .catch((err) => {
+    console.log(err);
   });
-});
