@@ -66,7 +66,7 @@ app.post("/message/post", async (req, res) => {
       body: message,
       from: "+13607775253",
       messagingServiceSid: process.env.messagingServiceSid,
-      to: Number(phone),
+      to: phone,
     })
     .then((message) => {
       console.log(message.sid);
