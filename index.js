@@ -7,6 +7,11 @@ const ContactModel = require("./models/contact.model");
 const Message = require("./models/message.model");
 
 const app = express();
+// for otp
+const accountSid = process.env.accountSid;
+const authToken = process.env.authToken;
+const client = require("twilio")(accountSid, authToken);
+// ---------
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -56,11 +61,47 @@ app.post("/message/post", async (req, res) => {
     phone: Number(phone),
   });
 
-  await Message.create(newMessage)
-    .then(() => res.status(201).send("message saved successfully"))
-    .catch((err) => {
-      res.status(403).send("failed to store message", err);
-    });
+  try {
+    client.messages
+      .create({
+        body: message,
+        from: "+13607775253",
+        messagingServiceSid: process.env.messagingServiceSid,
+        to: Number(phone),
+      })
+      .then((message) => {
+        console.log(message.sid);
+      })
+      .done();
+
+    await Message.create(newMessage)
+      .then(() => res.status(201).send("message saved successfully"))
+      .catch((err) => {
+        res.status(403).send("failed to store message", err);
+      });
+  } catch (err) {
+    res.send(err);
+  }
+});
+
+// test route for message sending
+app.post("/test", async (req, res) => {
+  try {
+    client.messages
+      .create({
+        body: "test",
+        from: "+13607775253",
+        messagingServiceSid: process.env.messagingServiceSid,
+        to: "+918770846674",
+      })
+      .then((message) => {
+        console.log(message.sid);
+      })
+      .done();
+    res.send("success");
+  } catch (err) {
+    res.send(err);
+  }
 });
 
 // after mongodb is connected start the server
