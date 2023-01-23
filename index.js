@@ -83,9 +83,9 @@ app.post("/message/post", async (req, res) => {
 // test route for message sending
 app.post("/test", async (req, res) => {
   try {
-    client.messages
+    await client.messages
       .create({
-        body: "test",
+        body: "test message",
         from: "+13607775253",
         messagingServiceSid: process.env.messagingServiceSid,
         to: "+918770846674",
