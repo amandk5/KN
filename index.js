@@ -61,27 +61,23 @@ app.post("/message/post", async (req, res) => {
     phone: Number(phone),
   });
 
-  try {
-    client.messages
-      .create({
-        body: message,
-        from: "+13607775253",
-        messagingServiceSid: process.env.messagingServiceSid,
-        to: Number(phone),
-      })
-      .then((message) => {
-        console.log(message.sid);
-      })
-      .done();
+  client.messages
+    .create({
+      body: message,
+      from: "+13607775253",
+      messagingServiceSid: process.env.messagingServiceSid,
+      to: Number(phone),
+    })
+    .then((message) => {
+      console.log(message.sid);
+    })
+    .done();
 
-    await Message.create(newMessage)
-      .then(() => res.status(201).send("message saved successfully"))
-      .catch((err) => {
-        res.status(403).send("failed to store message", err);
-      });
-  } catch (err) {
-    res.send(err);
-  }
+  await Message.create(newMessage)
+    .then(() => res.status(201).send("message saved successfully"))
+    .catch((err) => {
+      res.status(403).send("failed to store message", err);
+    });
 });
 
 // test route for message sending
